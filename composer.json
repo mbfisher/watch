@@ -1,0 +1,14 @@
+{
+    "name": "mbfisher/watch",
+    "description": "Filesystem watching with inotify",
+    "license": "MIT",
+    "authors": [
+        {
+            "name": "Mike Fisher",
+            "email": "mike@mbfisher.com"
+        }
+    ],
+    "require": {
+
+    }
+}
