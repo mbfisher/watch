@@ -9,6 +9,12 @@
         }
     ],
     "require": {
-
+        "ext-inotify": "*",
+        "symfony/event-dispatcher": "~2.4"
+    },
+    "autoload": {
+        "psr-4": {
+            "mbfisher\\Watch\\": "src/"
+        }
     }
 }
