@@ -13,7 +13,6 @@
         "symfony/event-dispatcher": "~2.4"
     },
     "require-dev": {
-        "task/task": "dev-master",
         "phpunit/phpunit": "~4.0",
         "ext-inotify": "*"
     },

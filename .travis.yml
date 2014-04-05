@@ -7,4 +7,4 @@ install:
   - pecl install inotify
   - composer install
 before_script: phpenv config-add .php.ini
-script: ./vendor/bin/task test
+script: phpunit
