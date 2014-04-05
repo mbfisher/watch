@@ -8,6 +8,7 @@
             "email": "mike@mbfisher.com"
         }
     ],
+    "minimum-stability": "dev",
     "require": {
         "symfony/event-dispatcher": "~2.4"
     },
