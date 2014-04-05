@@ -12,7 +12,7 @@ class Watcher
     
     public function __construct($path, $pattern = null)
     {
-        if (!function_exists('inotify_init')) {
+        if (function_exists('inotify_init')) {
             $this->dispatcher = new InotifyEventDispatcher($path, $pattern);
         } else {
             $this->dispatcher = new IteratorEventDispatcher($path, $pattern);
