@@ -1,0 +1,13 @@
+<?php
+
+$project = new Task\Project('watch');
+
+$project->inject(function ($project) {
+    $project['phpunit'] = new Task\Plugin\PHPUnitPlugin;
+});
+
+$project->addTask('test', ['phpunit', function ($output, $phpunit) {
+    $phpunit->run();
+}]);
+
+return $project;

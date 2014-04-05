@@ -2,61 +2,42 @@
 
 namespace mbfisher\Watch;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
+use mbfisher\Watch\EventDispatcher\EventDispatcherInterface;
+use mbfisher\Watch\EventDispatcher\InotifyEventDispatcher;
+use mbfisher\Watch\EventDispatcher\IteratorEventDispatcher;
 
-class Watcher extends EventDispatcher
+class Watcher
 {
     protected $stop;
-
-    public function __construct($path, $events = IN_ALL_EVENTS)
+    
+    public function __construct($path, $pattern = null)
     {
-        $this->path = $path;
-        $this->events = IN_ALL_EVENTS;
+        if (!function_exists('inotify_init')) {
+            $this->dispatcher = new InotifyEventDispatcher($path, $pattern);
+        } else {
+            $this->dispatcher = new IteratorEventDispatcher($path, $pattern);
+        }
+    }
+
+    public function setDispatcher(EventDispatcherInterface $dispatcher)
+    {
+    }
+
+    public function on($event, callable $callback)
+    {
+        $this->dispatcher->addListener($event, $callback);
+        return $this;
     }
 
     public function start()
     {
-        $this->stop = false;
-        $fd = inotify_init();
-        $wd = inotify_add_watch($fd, $this->path, $this->events);
-
-        $read = [$fd];
-        $write = null;
-        $except = null;
-        stream_select($read, $write, $except, 0);
-        stream_set_blocking($fd, 0);
-
-        while (true) {
-            if ($this->stop) {
-                inotify_rm_watch($fd, $wd);
-                return fclose($fd);
-            }
-
-            if ($events = inotify_read($fd)) {
-                foreach ($events as $details) {
-                    if ($details['name']) {
-                        $target = rtrim($this->path, '/').'/'.$details['name'];
-                    } else {
-                        $target = $this->path;
-                    }
-
-                    $event = new Event($details, $target);
-
-                    $this->dispatch($details['mask'], $event);
-                    $this->dispatch(IN_ALL_EVENTS, $event);
-                }
-            }
-        }
+        $this->dispatcher->start();
+        return $this;
     }
 
     public function stop()
     {
-        $this->stop = true;
-    }
-
-    public function addListener($eventName, $listener, $priority = 0)
-    {
-        parent::addListener($eventName, $listener, $priority);
+        $this->dispatcher->stop();
         return $this;
     }
 }
