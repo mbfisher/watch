@@ -67,19 +67,24 @@ class IteratorEventDispatcher extends EventDispatcher implements EventDispatcher
     {
         $path = $file->getPathname();
         $event = new Event($file);
-        $this->dispatch('all', $event);
 
+        clearstatcache(true, $path);
         $mtime = $file->getMTime();
 
+        $dispatch = false;
         if (isset($this->files[$path])) {
             $previous = $this->files[$path];
 
             if ($mtime > $previous) {
+                $dispatch = true;
                 $this->dispatch('modify', $event);
             }
         }
 
-        clearstatcache(true, $path);
+        if ($dispatch) {
+            $this->dispatch('all', $event);
+        }
+
         $this->files[$path] = $mtime;
     }
 
