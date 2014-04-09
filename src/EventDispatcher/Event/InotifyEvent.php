@@ -1,8 +1,6 @@
 <?php
 
-namespace mbfisher\Watch\Event;
-
-use Symfony\Component\EventDispatcher\Event as BaseEvent;
+namespace mbfisher\Watch\EventDispatcher\Event;
 
 class InotifyEvent extends Event
 {

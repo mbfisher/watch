@@ -1,11 +1,12 @@
 <?php
 
-namespace mbfisher\Watch\EventDispatcher;
+namespace mbfisher\Watch;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use mbfisher\Watch\Event\Event;
+use mbfisher\Watch\EventDispatcher\EventDispatcher;
+use mbfisher\Watch\EventDispatcher\Event\Event;
+use mbfisher\Watch\EventDispatcher\Event\StartEvent;
 
-class IteratorEventDispatcher extends EventDispatcher implements EventDispatcherInterface
+class IteratorWatcher extends EventDispatcher implements WatcherInterface
 {
     protected $files = [];
     protected $stop;
@@ -33,6 +34,8 @@ class IteratorEventDispatcher extends EventDispatcher implements EventDispatcher
             $this->path
         ));
 
+        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
+
         $this->files = [];
         $this->stop = false;
         while (true) {
@@ -54,6 +57,8 @@ class IteratorEventDispatcher extends EventDispatcher implements EventDispatcher
 
     public function startFile()
     {
+        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
+
         while (true) {
             if ($this->stop) {
                 return;

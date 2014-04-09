@@ -1,6 +1,6 @@
 <?php
 
-namespace mbfisher\Watch\Event;
+namespace mbfisher\Watch\EventDispatcher\Event;
 
 interface EventInterface
 {

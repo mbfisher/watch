@@ -1,17 +1,17 @@
 <?php
 
-namespace mbfisher\Watch\EventDispatcher;
+namespace mbfisher\Watch;
 
 use mbfisher\Watch\Test\TriggerEventTrait;
 
-class IteratorEventDispatcherTest extends \PHPUnit_Framework_TestCase
+class IteratorWatcherTest extends \PHPUnit_Framework_TestCase
 {
     use TriggerEventTrait;
 
     public function testFile()
     {
         $tmp = tempnam(sys_get_temp_dir(), 'watch');
-        $dispatcher = new IteratorEventDispatcher($tmp);
+        $dispatcher = new IteratorWatcher($tmp);
         $this->triggerEvent('all', $dispatcher, function () use ($tmp) {
             touch($tmp);
         });
@@ -26,7 +26,7 @@ class IteratorEventDispatcherTest extends \PHPUnit_Framework_TestCase
         $tmp = "$dir/foo";
         mkdir($dir);
 
-        $dispatcher = new IteratorEventDispatcher($dir);
+        $dispatcher = new IteratorWatcher($dir);
         $this->triggerEvent('all', $dispatcher, function () use ($tmp) {
             touch($tmp);
         });

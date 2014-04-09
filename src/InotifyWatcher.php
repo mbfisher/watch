@@ -1,17 +1,19 @@
 <?php
 
-namespace mbfisher\Watch\EventDispatcher;
+namespace mbfisher\Watch;
 
-use Symfony\Component\EventDispatcher\EventDispatcher;
-use mbfisher\Watch\Event\InotifyEvent as Event;
+use mbfisher\Watch\EventDispatcher\EventDispatcher;
+use mbfisher\Watch\EventDispatcher\Event\InotifyEvent as Event;
+use mbfisher\Watch\EventDispatcher\Event\StartEvent;
 
-class InotifyEventDispatcher extends EventDispatcher implements EventDispatcherInterface
+class InotifyWatcher extends EventDispatcher implements WatcherInterface
 {
     protected $stop;
 
     public function __construct($path, $pattern = null)
     {
         $this->path = $path;
+        $this->pattern = null;
     }
 
     public function start()
@@ -19,6 +21,8 @@ class InotifyEventDispatcher extends EventDispatcher implements EventDispatcherI
         $this->stop = false;
         $fd = inotify_init();
         $wd = inotify_add_watch($fd, $this->path, IN_ALL_EVENTS);
+
+        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
 
         $read = [$fd];
         $write = null;
