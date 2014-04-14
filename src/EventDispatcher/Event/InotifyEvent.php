@@ -16,4 +16,15 @@ class InotifyEvent extends Event
     {
         return $this->mask;
     }
+
+    public function getMaskName()
+    {
+        foreach (get_defined_constants() as $name => $value) {
+            if (strpos($name, 'IN_') === 0 && $value == $this->mask) {
+                return $name;
+            }
+        }
+
+        return false;
+    }
 }

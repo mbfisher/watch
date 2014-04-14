@@ -14,7 +14,7 @@ abstract class EventDispatcher extends BaseEventDispatcher
             return parent::dispatch($eventName, $event);
         } catch (\Exception $ex) {
             if ($this->hasListeners('exception')) {
-                return parent::dispatch('exception', new ExceptionEvent($ex));
+                return parent::dispatch('exception', new ExceptionEvent($ex, $event));
             } else {
                 throw $ex;
             }
