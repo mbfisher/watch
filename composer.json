@@ -8,16 +8,16 @@
             "email": "mike@mbfisher.com"
         }
     ],
-    "minimum-stability": "dev",
     "require": {
         "symfony/event-dispatcher": "~2.4"
     },
     "require-dev": {
-        "phpunit/phpunit": "~4.0",
+        "task/task": "~0.1",
+        "task/phpunit": "~0.1",
         "ext-inotify": "*"
     },
     "suggest": {
-        "ext-inotify": "Use mbfisher\\Watch\\InotifyWatcher"
+        "ext-inotify": "Use InotifyWatcher"
     },
     "autoload": {
         "psr-4": {

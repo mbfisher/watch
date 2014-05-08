@@ -1,12 +1,8 @@
 <?php
 
-namespace mbfisher\Watch;
+namespace mbfisher\Watch\Watcher;
 
-use mbfisher\Watch\EventDispatcher\EventDispatcher;
-use mbfisher\Watch\EventDispatcher\Event\InotifyEvent as Event;
-use mbfisher\Watch\EventDispatcher\Event\StartEvent;
-
-class InotifyWatcher extends EventDispatcher implements WatcherInterface
+class InotifyWatcher extends Watcher
 {
     protected $stop;
 
@@ -21,8 +17,6 @@ class InotifyWatcher extends EventDispatcher implements WatcherInterface
         $this->stop = false;
         $fd = inotify_init();
         $wd = inotify_add_watch($fd, $this->path, IN_ALL_EVENTS);
-
-        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
 
         $read = [$fd];
         $write = null;
@@ -44,15 +38,14 @@ class InotifyWatcher extends EventDispatcher implements WatcherInterface
                         $target = $this->path;
                     }
 
-                    $event = new Event(new \SplFileInfo($target), $details['mask']);
-
+                    $file = new \SplFileInfo($target);
                     switch (true) {
                         case $details['mask'] & IN_MODIFY:
-                            $this->dispatch('modify', $event);
+                            $this->modify($file);
                             break;
                     }
 
-                    $this->dispatch('all', $event);
+                    $this->all($file);
                 }
             }
         }

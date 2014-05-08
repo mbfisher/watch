@@ -1,6 +1,6 @@
 <?php
 
-namespace mbfisher\Watch;
+namespace mbfisher\Watch\Watcher;
 
 use mbfisher\Watch\Test\TriggerEventTrait;
 

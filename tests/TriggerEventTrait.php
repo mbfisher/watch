@@ -2,11 +2,11 @@
 
 namespace mbfisher\Watch\Test;
 
-use mbfisher\Watch\WatcherInterface;
+use mbfisher\Watch\Watcher\WatcherInterface;
 
 trait TriggerEventTrait
 {
-    public function triggerEvent($event, WatcherInterface $watcher, callable $trigger)
+    public function triggerEvent($event, WatcherInterface $watcher, callable $trigger, $shouldCall = true)
     {
         $called = false;
 
@@ -25,6 +25,6 @@ trait TriggerEventTrait
             die();
         }
 
-        $this->assertTrue($called);
+        $this->assertEquals($shouldCall, $called);
     }
 }

@@ -1,20 +1,19 @@
 <?php
 
-namespace mbfisher\Watch;
+namespace mbfisher\Watch\Watcher;
 
-use mbfisher\Watch\EventDispatcher\EventDispatcher;
-use mbfisher\Watch\EventDispatcher\Event\Event;
-use mbfisher\Watch\EventDispatcher\Event\StartEvent;
-
-class IteratorWatcher extends EventDispatcher implements WatcherInterface
+class IteratorWatcher extends Watcher
 {
     protected $files = [];
     protected $stop;
+    protected $include;
+    protected $exclude;
 
-    public function __construct($path, $pattern = null)
+    public function __construct($path, $include = null, $exclude = null)
     {
         $this->path = $path;
-        $this->pattern = $pattern;
+        $this->include = $include;
+        $this->exclude = $exclude;
     }
 
     public function start()
@@ -34,8 +33,6 @@ class IteratorWatcher extends EventDispatcher implements WatcherInterface
             $this->path
         ));
 
-        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
-
         $this->files = [];
         $this->stop = false;
         while (true) {
@@ -46,32 +43,33 @@ class IteratorWatcher extends EventDispatcher implements WatcherInterface
             foreach ($iterator as $file) {
                 $path = $file->getPathname();
 
-                if ($this->pattern && !preg_match($this->pattern, $path)) {
+                if ($this->include && !preg_match($this->include, $path)) {
                     continue;
                 }
 
-                $this->trigger($file);
+                if ($this->exclude && preg_match($this->exclude, $path)) {
+                    continue;
+                }
+
+                $this->checkFile($file);
             }
         }
     }
 
     public function startFile()
     {
-        $this->dispatch('start', new StartEvent($this->path, $this->pattern));
-
         while (true) {
             if ($this->stop) {
                 return;
             }
 
-            $this->trigger(new \SplFileInfo($this->path));
+            $this->checkFile(new \SplFileInfo($this->path));
         }
     }
 
-    public function trigger(\SplFileInfo $file)
+    public function checkFile(\SplFileInfo $file)
     {
         $path = $file->getPathname();
-        $event = new Event($file);
 
         clearstatcache(true, $path);
         $mtime = $file->getMTime();
@@ -82,12 +80,12 @@ class IteratorWatcher extends EventDispatcher implements WatcherInterface
 
             if ($mtime > $previous) {
                 $dispatch = true;
-                $this->dispatch('modify', $event);
+                $this->modify($file);
             }
         }
 
         if ($dispatch) {
-            $this->dispatch('all', $event);
+            $this->all($file);
         }
 
         $this->files[$path] = $mtime;

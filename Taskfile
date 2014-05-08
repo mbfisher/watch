@@ -1,13 +1,15 @@
 <?php
 
-$project = new Task\Project('watch');
+require 'vendor/autoload.php';
 
-$project->inject(function ($project) {
-    $project['phpunit'] = new Task\Plugin\PHPUnitPlugin;
+$project = new Task\Project('mbfisher/watch');
+
+$project->inject(function ($container) {
+    $container['phpunit'] = new Task\Plugin\PHPUnitPlugin;
 });
 
-$project->addTask('test', ['phpunit', function ($output, $phpunit) {
-    $phpunit->run();
+$project->addTask('test', ['phpunit', function ($phpunit) {
+    $phpunit->getCommand()->pipe($this->getOutput());
 }]);
 
 return $project;
