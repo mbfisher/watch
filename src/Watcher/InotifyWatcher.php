@@ -5,6 +5,7 @@ namespace mbfisher\Watch\Watcher;
 class InotifyWatcher extends Watcher
 {
     protected $stop;
+    protected $sleep = 50000;
 
     public function __construct($path, $pattern = null)
     {
@@ -48,6 +49,8 @@ class InotifyWatcher extends Watcher
                     $this->all($file);
                 }
             }
+
+            usleep($this->sleep);
         }
     }
 

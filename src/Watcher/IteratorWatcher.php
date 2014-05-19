@@ -8,6 +8,7 @@ class IteratorWatcher extends Watcher
     protected $stop;
     protected $include;
     protected $exclude;
+    protected $sleep = 50000;
 
     public function __construct($path, $include = null, $exclude = null)
     {
@@ -53,6 +54,8 @@ class IteratorWatcher extends Watcher
 
                 $this->checkFile($file);
             }
+
+            usleep($this->sleep);
         }
     }
 
@@ -64,6 +67,8 @@ class IteratorWatcher extends Watcher
             }
 
             $this->checkFile(new \SplFileInfo($this->path));
+
+            usleep($this->sleep);
         }
     }
 
